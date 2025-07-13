@@ -120,7 +120,7 @@ It's designed to reflect workflows in modern cloud-native security teams, with a
 ## 👨‍💻 Author
 
 **Aaron Diaz**  
-Cloud Security / Detection Engineer | [LinkedIn](https://www.linkedin.com/) | [GitHub](https://github.com/)
+Cloud Security / Detection Engineer | [LinkedIn](https://www.linkedin.com/in/aaron918/) | [GitHub](https://github.com/SecurityAD)
 
 ---
 
