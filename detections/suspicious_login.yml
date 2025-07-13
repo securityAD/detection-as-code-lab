@@ -1,0 +1,22 @@
+title: Suspicious AWS Console Login
+id: 4fa7b3f3-86d4-4c9a-b962-871ab6ad6000
+description: Detects AWS Console logins from unusual IPs or geolocations.
+status: experimental
+author: Aaron Diaz
+logsource:
+  service: aws.cloudtrail
+detection:
+  selection:
+    eventName: ConsoleLogin
+    additionalEventData.MFAUsed: "No"
+  condition: selection
+fields:
+  - userIdentity.arn
+  - sourceIPAddress
+  - userAgent
+falsepositives:
+  - Internal logins without MFA temporarily
+level: medium
+tags:
+  - attack.T1078
+  - cloud

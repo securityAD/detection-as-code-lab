@@ -1,0 +1,23 @@
+title: IAM Role Privilege Escalation via Role Attachment
+id: 84e1e4f0-bac7-44e1-a456-5a8a9b12d100
+description: Detects IAM users attaching privileged IAM roles to EC2 instances, which can lead to privilege escalation.
+status: experimental
+author: Aaron Diaz
+logsource:
+  service: aws.cloudtrail
+detection:
+  selection:
+    eventName: AttachRolePolicy
+    requestParameters.policyArn:
+      - arn:aws:iam::aws:policy/AdministratorAccess
+  condition: selection
+fields:
+  - eventName
+  - userIdentity.arn
+  - requestParameters.policyArn
+falsepositives:
+  - Legitimate admin role management
+level: high
+tags:
+  - attack.T1484.1
+  - cloud
