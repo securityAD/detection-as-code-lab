@@ -9,7 +9,7 @@ This lab simulates real-world AWS attack scenarios using [CloudGoat](https://git
 ## 📌 Project Goals
 
 - Simulate adversary behavior in AWS using CloudGoat
-- Capture logs using AWS native logging tools (CloudTrail, VPC Flow Logs, etc.)
+- Capture logs using AWS-native logging tools (CloudTrail, VPC Flow Logs)
 - Build custom detections using Sigma rules (YAML) and/or Python
 - Document attacker playbooks and detection logic tied to MITRE ATT&CK
 - Showcase Detection-as-Code workflows for Security/Cloud Engineers
@@ -22,24 +22,28 @@ This lab simulates real-world AWS attack scenarios using [CloudGoat](https://git
 |------------------|------------|
 | Attack Simulation | [CloudGoat](https://github.com/RhinoSecurityLabs/cloudgoat) |
 | Cloud Platform   | AWS (CloudTrail, S3, IAM, VPC Logs) |
+| Logging Infra    | Terraform |
 | Detection Logic  | Sigma, Python |
-| Optional Stack   | OpenSearch / Elastic / custom Lambda-based processing |
-| Infra-as-Code    | Terraform (if applicable) |
+| Optional Stack   | OpenSearch / Elastic / custom Lambda-based parsing |
 
 ---
 
 ## 🧪 Lab Architecture (Simplified)
 
 ```
-[CloudGoat Scenario] 
+[Terraform Infrastructure Provisioning]
      ↓
-[CloudTrail / VPC Logs / S3 Access Logs]
+[Logging: CloudTrail + VPC Flow Logs + S3 Access Logs]
      ↓
-[Log Ingestion Pipeline (S3 → OpenSearch or Lambda)]
+[CloudGoat: Deploy Vulnerable AWS Environment]
+     ↓
+[Manual Attack Simulation (via CloudGoat walkthroughs)]
+     ↓
+[Log Collection & Ingestion]
      ↓
 [Detections (Sigma Rules or Python)]
      ↓
-[Alerts / Dashboarding / Documentation]
+[Alerts / Dashboards / Documentation]
 ```
 
 > 🖼️ _Architecture diagram to be added in `/docs/` soon._
@@ -56,19 +60,41 @@ cd cloudgoat
 ./cloudgoat.py create iam_privesc_by_attachment
 ```
 
-### 2. Enable Logging in AWS
-- ✅ CloudTrail (across regions)
-- ✅ VPC Flow Logs
-- ✅ S3 Access Logging (if applicable)
+---
+
+### 2. Deploy AWS Logging Infrastructure with Terraform
+
+In the `terraform/` directory of this repo:
+
+```bash
+cd terraform
+terraform init
+terraform apply
+```
+
+This sets up:
+- S3 bucket for CloudTrail
+- Multi-region CloudTrail trail
+- CloudWatch log group for VPC flow logs
+- IAM role for logging
+- Flow logs for your default VPC
+
+> ✅ The VPC is dynamically selected using `data "aws_vpc" "default"` — no manual VPC ID needed.
+
+---
 
 ### 3. Simulate Attacks & Observe Logs
-- Follow attacker path defined in `playbooks/`
-- Confirm log events appear in destination (S3 or OpenSearch)
+
+- Follow attack playbooks in `playbooks/`
+- Confirm logs appear in CloudTrail, CloudWatch, or S3
+
+---
 
 ### 4. Write Detection Rules
+
 - Place rules in `detections/` (YAML or Python)
 - Map each rule to a MITRE ATT&CK technique
-- Include example log entries that trigger each rule
+- Include sample log excerpts in rule comments
 
 ---
 
@@ -78,10 +104,10 @@ cd cloudgoat
 .
 ├── cloudgoat-scenarios/      # CloudGoat environments
 ├── detections/               # Sigma/Python detection rules
-├── log-pipeline/             # Ingestion & parsing logic
+├── log-pipeline/             # Log ingestion/parsing code (if any)
 ├── playbooks/                # Attack walkthroughs + detection analysis
-├── terraform/                # Optional IaC for AWS log setup
-├── docs/                     # Architecture diagrams, rule mappings
+├── terraform/                # Terraform infrastructure setup
+├── docs/                     # Architecture diagrams, ATT&CK mappings
 └── README.md                 # You're here!
 ```
 
@@ -91,10 +117,8 @@ cd cloudgoat
 
 This lab mimics how real detection engineers, cloud security analysts, and incident responders:
 - Simulate threats in the cloud
-- Write structured detections for security signals
-- Build and test against actual attacker behavior
-
-It's designed to reflect workflows in modern cloud-native security teams, with a focus on **Detection-as-Code** and **cloud log telemetry**.
+- Write structured detections for cloud log telemetry
+- Build and test Detection-as-Code workflows
 
 ---
 
@@ -120,7 +144,7 @@ It's designed to reflect workflows in modern cloud-native security teams, with a
 ## 👨‍💻 Author
 
 **Aaron Diaz**  
-Cloud Security / Detection Engineer | [LinkedIn](https://www.linkedin.com/in/aaron918/) | [GitHub](https://github.com/SecurityAD)
+Cloud Security / Detection Engineer | [LinkedIn](https://www.linkedin.com/) | [GitHub](https://github.com/)
 
 ---
 
