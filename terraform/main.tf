@@ -2,13 +2,18 @@ provider "aws" {
   region = var.aws_region
 }
 
+data "aws_caller_identity" "current" {}
+
+data "aws_vpc" "default" {
+  default = true
+}
+
 resource "aws_s3_bucket" "cloudtrail_bucket" {
   bucket = var.cloudtrail_bucket_name
-
   force_destroy = true
 
   tags = {
-    Name = "cloudtrail-logs"
+    Name    = "cloudtrail-logs"
     Project = "detection-as-code"
   }
 }
@@ -26,7 +31,7 @@ data "aws_iam_policy_document" "cloudtrail_bucket_policy" {
       identifiers = ["cloudtrail.amazonaws.com"]
     }
 
-    actions = ["s3:GetBucketAcl"]
+    actions   = ["s3:GetBucketAcl"]
     resources = [aws_s3_bucket.cloudtrail_bucket.arn]
   }
 
@@ -37,7 +42,7 @@ data "aws_iam_policy_document" "cloudtrail_bucket_policy" {
       identifiers = ["cloudtrail.amazonaws.com"]
     }
 
-    actions = ["s3:PutObject"]
+    actions   = ["s3:PutObject"]
     resources = ["${aws_s3_bucket.cloudtrail_bucket.arn}/AWSLogs/${data.aws_caller_identity.current.account_id}/*"]
 
     condition {
@@ -47,8 +52,6 @@ data "aws_iam_policy_document" "cloudtrail_bucket_policy" {
     }
   }
 }
-
-data "aws_caller_identity" "current" {}
 
 resource "aws_cloudtrail" "main" {
   name                          = "cloudgoat-trail"
@@ -84,9 +87,9 @@ resource "aws_iam_role_policy_attachment" "flow_logs_attach" {
 }
 
 resource "aws_flow_log" "main" {
-  iam_role_arn    = aws_iam_role.flow_logs_role.arn
-  log_destination = aws_cloudwatch_log_group.vpc_flow_logs.arn
+  iam_role_arn         = aws_iam_role.flow_logs_role.arn
+  log_destination      = aws_cloudwatch_log_group.vpc_flow_logs.arn
   log_destination_type = "cloud-watch-logs"
-  traffic_type    = "ALL"
-  vpc_id          = var.vpc_id
+  traffic_type         = "ALL"
+  vpc_id               = data.aws_vpc.default.id
 }
