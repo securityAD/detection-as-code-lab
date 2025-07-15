@@ -103,7 +103,7 @@ This confirms the escalation was captured by your Terraform-logged environment.
 
 ## 📎 Next Step
 
-➡️ [Write the Sigma detection rule](../detections/iam_attach_policy_escalation.yml)
+➡️ [Write the Sigma detection rule](https://github.com/securityAD/detection-as-code-lab/blob/main/detections/iam_privesc_attach_role.yml)
 
 ---
 
